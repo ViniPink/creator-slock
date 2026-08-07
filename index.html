@@ -162,10 +162,35 @@
   <script>
     const form = document.getElementById('lockForm');
     const status = document.getElementById('status');
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2om_QVG3JZ78KIRoDnZeCfZahG2y10I6-lm85-uxIR-_y0xMXapEUJOOzwLgTn6Fu/exec';
+
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      status.textContent = 'Recebido! Você será avisado em breve.';
-      form.reset();
+
+      const nome = document.getElementById('f-nome').value.trim();
+      const email = document.getElementById('f-email').value.trim();
+      const telefone = document.getElementById('f-telefone').value.trim();
+
+      const submitBtn = document.getElementById('btn-avise');
+      submitBtn.disabled = true;
+      status.textContent = 'Enviando...';
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ nome, email, telefone })
+      })
+      .then(function() {
+        status.textContent = 'Recebido! Você será avisado em breve.';
+        form.reset();
+      })
+      .catch(function() {
+        status.textContent = 'Erro ao enviar. Tente novamente.';
+      })
+      .finally(function() {
+        submitBtn.disabled = false;
+      });
     });
   </script>
 </body>
